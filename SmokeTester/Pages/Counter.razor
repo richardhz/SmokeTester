@@ -1,0 +1,42 @@
+﻿@page "/counter"
+@using SmokeTester.Data;
+@using SmokeTester.Services;
+
+<h1>Test</h1>
+
+
+
+<EditForm Model="SmokeModel" OnValidSubmit="@HandleValidSubmit">
+
+    <div class="form-group form-row mb-3">
+        <InputText class="form-control col-sm-8" id="clientId" name="ClientId" @bind-Value=SmokeModel.ClientId placeholder="ClientId" />
+        <ValidationMessage For="@(() => SmokeModel.ClientId)" />
+    </div>
+
+    <div class="form-group form-row mb-3">
+        <InputText class="form-control col-sm-8" id="tenentId" name="TenantId" @bind-Value=SmokeModel.TenantId placeholder="TenantId" data-val="true" data-val-required="*" />
+        <ValidationMessage For="@(() => SmokeModel.TenantId)" />
+    </div>
+    <div class="form-group form-row mb-3">
+        <InputText class="form-control col-sm-8" id="url" name="Url" @bind-Value=SmokeModel.Url placeholder="Url" data-val="true" data-val-required="*" />
+        <ValidationMessage For="@(() => SmokeModel.Url)" />
+    </div>
+
+    <button type="submit" disabled="@ButtonIsDisabled" class="btn btn-primary">Test</button>
+</EditForm>
+
+
+
+@code {
+    @inject ISmokeTestTools SmokeTestTools;
+    protected SmokeParams SmokeModel { get; set; } = new SmokeParams();
+    protected bool ButtonIsDisabled { get; set; }
+
+    protected async Task HandleValidSubmit()
+    {
+        var xx = await SmokeTestTools.ProcessRequest(SmokeModel);
+        //We make the call to smoke tools here when all required fields a filled out
+        await Task.Delay(10);
+        return; 
+    }
+}
