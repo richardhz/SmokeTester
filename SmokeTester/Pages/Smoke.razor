@@ -1,8 +1,8 @@
-﻿@page "/counter"
+﻿@page "/smoke"
 @using SmokeTester.Data;
 @using SmokeTester.Services;
 
-<h1>Test</h1>
+<h1>Smoke Test</h1>
 
 
 
@@ -22,6 +22,11 @@
         <ValidationMessage For="@(() => SmokeModel.Url)" />
     </div>
 
+    <div class="form-group form-row mb-3">
+        <InputTextArea rows="16" class="form-control col-sm-8" id="tkn" name="Token" @bind-Value=SmokeModel.Token placeholder="Result" enabled="false" />
+
+    </div>
+
     <button type="submit" disabled="@ButtonIsDisabled" class="btn btn-primary">Test</button>
 </EditForm>
 
@@ -34,9 +39,9 @@
 
     protected async Task HandleValidSubmit()
     {
-        var xx = await SmokeTestTools.ProcessRequest(SmokeModel);
+        SmokeModel.Token = await SmokeTestTools.ProcessRequest(SmokeModel);
         //We make the call to smoke tools here when all required fields a filled out
-        await Task.Delay(10);
-        return; 
+        //await Task.Delay(10);
+        return;
     }
 }

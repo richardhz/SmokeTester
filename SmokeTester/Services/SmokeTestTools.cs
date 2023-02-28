@@ -5,7 +5,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Text.Json.Nodes;
 using System.Threading.Tasks;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace SmokeTester.Services;
 public sealed class SmokeTestTools : ISmokeTestTools
@@ -15,33 +17,45 @@ public sealed class SmokeTestTools : ISmokeTestTools
 
     public async Task<string> ProcessRequest(SmokeParams smokeParams)
     {
-        var accessToken = await GetToken(smokeParams);
+        string json = "could not aquire access token.";
+
+        var accessToken = await GetTokenAsync(smokeParams);
+        if (accessToken is null)
+        {
+            return "could not aquire access token.";
+        }
+        if (smokeParams.Url is null)
+        {
+            return accessToken;
+        }
         var client = _httpClientFactory.CreateClient();
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-        var response = await client.GetAsync(smokeParams.Url);
-        var json = await response.Content.ReadAsStringAsync();
+        client.DefaultRequestHeaders.Add("X-Correlation-ID", "00000000-0000-0000-0000-000000000062");
+        //var response = await client.GetAsync(smokeParams.Url);
+        var response = await client.PostAsync(smokeParams.Url,null);
+        json = await response.Content.ReadAsStringAsync(); 
+       
         return json;
     }
 
-    //private async Task<string> GetToken(string clientId, string tenantId)
-    //{
-    //    var client = _httpClientFactory.CreateClient();
-    //    var response = await client.GetAsync($"https://login.microsoftonline.com/{tenantId}/oauth2/v2.0/token");
-    //    var json = await response.Content.ReadAsStringAsync();
-    //    return json;
-    //}
 
-    private async Task<string> GetToken(SmokeParams smokeParams)
+    private async Task<string> GetTokenAsync(SmokeParams smokeParams)
     {
         string clientId = smokeParams.ClientId;
         string tenantId = smokeParams.TenantId;
-        string[] scopes = new string[] { "user.read" };
+        string scope = ".default" ;
 
+        var authority = $"https://login.microsoftonline.com/{tenantId}";
         var app = PublicClientApplicationBuilder.Create(clientId)
-            .WithAuthority($"https://login.microsoftonline.com/{tenantId}").WithDefaultRedirectUri()
+            .WithAuthority(new Uri(authority)).WithDefaultRedirectUri()
             .Build();
-
-        var result = await app.AcquireTokenInteractive(scopes).ExecuteAsync();
+        var fullscope = $"{clientId}/{scope}";
+        var result = await app.AcquireTokenInteractive(new[] { fullscope }).ExecuteAsync();
+        
         return result.AccessToken;
     }
+
+    
+
+    
 }
