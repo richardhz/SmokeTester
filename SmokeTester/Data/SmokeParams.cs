@@ -11,8 +11,8 @@ public class SmokeParams
     public string ClientId { get; set; }
     public string TenantId { get; set; }
     public string Token { get; set; }
-    public bool TokenRequired { get; set; }
-    public bool UsePost { get; set; }
+    public bool TokenRequired { get; set; } = true;
+    public bool UsePost { get; set; } = true;
     public bool IsHealthCheck { get; set; }
     
     

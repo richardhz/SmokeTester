@@ -9,32 +9,35 @@
 <EditForm Model="SmokeModel" OnValidSubmit="@HandleValidSubmit">
 
     <div class="form-group form-row mb-3">
-        <InputText class="form-control col-sm-8" id="clientId" name="ClientId" @bind-Value=SmokeModel.ClientId placeholder="ClientId" />
-        <ValidationMessage For="@(() => SmokeModel.ClientId)" />
+        <div class="row">
+            <div class="col-6">
+                <InputText class="form-control col-sm-8" id="clientId" name="ClientId" @bind-Value=SmokeModel.ClientId placeholder="ClientId" />
+                <ValidationMessage For="@(() => SmokeModel.ClientId)" />
+            </div>
+            <div class="col-6">
+                <InputText class="form-control col-sm-8" id="tenentId" name="TenantId" @bind-Value=SmokeModel.TenantId placeholder="TenantId" data-val="true" data-val-required="*" />
+                <ValidationMessage For="@(() => SmokeModel.TenantId)" />
+            </div>
+        </div>
     </div>
-
-    <div class="form-group form-row mb-3">
-        <InputText class="form-control col-sm-8" id="tenentId" name="TenantId" @bind-Value=SmokeModel.TenantId placeholder="TenantId" data-val="true" data-val-required="*" />
-        <ValidationMessage For="@(() => SmokeModel.TenantId)" />
-    </div>
+    
     <div class="form-group form-row mb-3">
         <InputText class="form-control col-sm-8" id="url" name="Url" @bind-Value=SmokeModel.Url placeholder="Url" data-val="true" data-val-required="*" />
         <ValidationMessage For="@(() => SmokeModel.Url)" />
     </div>
 
-    <div class="form-group form-row mb-3">
-        <InputTextArea rows="20" class="form-control col-sm-8" id="tkn" name="Token" @bind-Value=SmokeModel.Token placeholder="Result" enabled="false" />
+    <div class="mb-3">
+        <label for="tknr">Token required</label>
+        <InputCheckbox id="tknr" name="TokenRequired" @bind-Value=SmokeModel.TokenRequired @oninput="OnOtherClick" />
+        <label for="verb">Use Post</label>
+        <InputCheckbox id="verb" name="UsePost" @bind-Value=SmokeModel.UsePost @oninput="OnOtherClick" />
+        <label for="hcheck">Health Check</label>
+        <InputCheckbox id="hcheck" name="HealthCheck" @bind-Value=SmokeModel.IsHealthCheck @oninput="OnHealthCheckClick" />
     </div>
 
     <div class="form-group form-row mb-3">
-        <label for="tknr">Token required</label>
-        <InputCheckbox  id="tknr" name="TokenRequired"@bind-Value=SmokeModel.TokenRequired />
-        <label for="verb">Use Post</label>
-        <InputCheckbox id="verb" name="UsePost" @bind-Value=SmokeModel.UsePost />
-        <label for="hcheck">Health Check</label>
-        <InputCheckbox id="hcheck" name="HealthCheck" @bind-Value=SmokeModel.IsHealthCheck />
+        <InputTextArea rows="20" class="form-control col-sm-8" id="tkn" name="Token" @bind-Value=SmokeModel.Token placeholder="Result" enabled="false" />
     </div>
-    
 
     <button type="submit" disabled="@ButtonIsDisabled" class="btn btn-primary">Test</button>
 </EditForm>
@@ -43,9 +46,36 @@
 
 @code {
     @inject ISmokeTestTools SmokeTestTools;
+   
     protected SmokeParams SmokeModel { get; set; } = new SmokeParams();
     protected bool ButtonIsDisabled { get; set; }
 
+    protected void OnHealthCheckClick(ChangeEventArgs e)
+    {
+        var ischecked = e.Value;
+        if ((bool)ischecked)
+        {
+            SmokeModel.TokenRequired = false;
+            SmokeModel.UsePost = false;
+        } else
+        {
+            SmokeModel.TokenRequired = true;
+            SmokeModel.UsePost = true;
+        }
+    }
+
+    protected void OnOtherClick(ChangeEventArgs e)
+    {
+        
+        if ((bool)(e.Value))
+        {
+            SmokeModel.IsHealthCheck = false;
+        }
+    }
+
+
+
+    
     protected async Task HandleValidSubmit()
     {
         SmokeModel.Token = await SmokeTestTools.ProcessRequest(SmokeModel);

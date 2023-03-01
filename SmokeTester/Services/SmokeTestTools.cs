@@ -40,6 +40,7 @@ public sealed class SmokeTestTools : ISmokeTestTools
     {
         string accessToken = null;
         HttpClient client = null;
+
         if (smokeParams.Url is not null)
         {
             client = _httpClientFactory.CreateClient();
@@ -69,6 +70,7 @@ public sealed class SmokeTestTools : ISmokeTestTools
         }
 
         HttpResponseMessage response;
+
         if (smokeParams.UsePost)
         {
            response = await client.PostAsync(smokeParams.Url, null);

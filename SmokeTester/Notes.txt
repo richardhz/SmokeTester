@@ -2,5 +2,5 @@
 Store clientId with a name key and have the clientId field a dropdown
 also possibly store the key for the tenantId in the clientId record.
 
-If health is checked token and post must be unchecked
-If token and or post checked health must be unchecked
+base address is also stored in clientId record
+if health check is selected url will be base address + /health 
