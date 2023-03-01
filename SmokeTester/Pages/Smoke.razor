@@ -23,9 +23,18 @@
     </div>
 
     <div class="form-group form-row mb-3">
-        <InputTextArea rows="16" class="form-control col-sm-8" id="tkn" name="Token" @bind-Value=SmokeModel.Token placeholder="Result" enabled="false" />
-
+        <InputTextArea rows="20" class="form-control col-sm-8" id="tkn" name="Token" @bind-Value=SmokeModel.Token placeholder="Result" enabled="false" />
     </div>
+
+    <div class="form-group form-row mb-3">
+        <label for="tknr">Token required</label>
+        <InputCheckbox  id="tknr" name="TokenRequired"@bind-Value=SmokeModel.TokenRequired />
+        <label for="verb">Use Post</label>
+        <InputCheckbox id="verb" name="UsePost" @bind-Value=SmokeModel.UsePost />
+        <label for="hcheck">Health Check</label>
+        <InputCheckbox id="hcheck" name="HealthCheck" @bind-Value=SmokeModel.IsHealthCheck />
+    </div>
+    
 
     <button type="submit" disabled="@ButtonIsDisabled" class="btn btn-primary">Test</button>
 </EditForm>
