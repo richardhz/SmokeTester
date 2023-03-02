@@ -52,8 +52,7 @@
 
     protected void OnHealthCheckClick(ChangeEventArgs e)
     {
-        var ischecked = e.Value;
-        if ((bool)ischecked)
+        if ((bool)(e.Value))
         {
             SmokeModel.TokenRequired = false;
             SmokeModel.UsePost = false;
@@ -66,7 +65,6 @@
 
     protected void OnOtherClick(ChangeEventArgs e)
     {
-        
         if ((bool)(e.Value))
         {
             SmokeModel.IsHealthCheck = false;
