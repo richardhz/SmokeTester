@@ -114,14 +114,11 @@ public sealed class SmokeTestTools : ISmokeTestTools
 
     private async Task<IEnumerable<EndPointProfile>> GetProfiles()
     {
-        //using FileStream openStream = File.OpenRead("Profiles.json");
-        //var profileListSequence = JsonSerializer.DeserializeAsyncEnumerable<SmokeProfile>(openStream);
         string data;
         try
         {
             using Stream fileStream = await FileSystem.Current.OpenAppPackageFileAsync("Profiles.json");
             using StreamReader reader = new StreamReader(fileStream);
-        
        
             data = reader.ReadToEnd();
         }
