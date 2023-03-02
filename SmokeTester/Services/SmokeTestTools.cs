@@ -38,6 +38,7 @@ public sealed class SmokeTestTools : ISmokeTestTools
 
     public async Task<string> ProcessRequest(SmokeParams smokeParams)
     {
+        var data = await GetProfiles();
         string accessToken = null;
         HttpClient client = null;
 
@@ -108,6 +109,30 @@ public sealed class SmokeTestTools : ISmokeTestTools
         var result = await app.AcquireTokenInteractive(new[] { fullscope }).ExecuteAsync();
         
         return result.AccessToken;
+    }
+
+
+    private async Task<IEnumerable<EndPointProfile>> GetProfiles()
+    {
+        //using FileStream openStream = File.OpenRead("Profiles.json");
+        //var profileListSequence = JsonSerializer.DeserializeAsyncEnumerable<SmokeProfile>(openStream);
+        string data;
+        try
+        {
+            using Stream fileStream = await FileSystem.Current.OpenAppPackageFileAsync("Profiles.json");
+            using StreamReader reader = new StreamReader(fileStream);
+        
+       
+            data = reader.ReadToEnd();
+        }
+        catch (Exception ex)
+        {
+
+            throw ex;
+        }
+        
+        var profiles = JsonSerializer.Deserialize<List<EndPointProfile>>(data);
+        return profiles;
     }
 
     
