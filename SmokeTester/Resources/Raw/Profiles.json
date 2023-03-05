@@ -1,12 +1,12 @@
 [
   {
     "Key": "ESS-Dev",
-    "ClientId": "80a6c68b-59aa-49a4-939a-7968ff79d676",
-    "BaseUrl": "https://exchangeset-dev.admiralty.co.uk"
+    "ClientId": "",
+    "BaseUrl": ""
   },
   {
     "Key": "ESS-QA",
-    "ClientId": "644e4406-4e92-4e5d-bdc5-3b233884f900",
-    "BaseUrl": "https://exchangeset-qa.admiralty.co.uk"
+    "ClientId": "",
+    "BaseUrl": ""
   }
 ]
