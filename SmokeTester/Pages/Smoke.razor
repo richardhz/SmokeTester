@@ -7,8 +7,14 @@
 
 
 <EditForm Model="SmokeModel" OnValidSubmit="@HandleValidSubmit">
-
+    
     <div class="form-group form-row mb-3">
+        <div class="form-group form-row mb-3">
+            <label>Profile: </label>
+            <RhzDropdown DataSource="@EndPoints" GetValue=@(x=> (x.Key,x.ClientId)) 
+                         OnElementClick="@( (string selection)=> OnSelection(selection))">
+            </RhzDropdown>
+        </div>
         <div class="row">
             <div class="col-6">
                 <InputText class="form-control col-sm-8" id="clientId" name="ClientId" @bind-Value=SmokeModel.ClientId placeholder="ClientId" />
@@ -39,16 +45,42 @@
         <InputTextArea rows="20" class="form-control col-sm-8" id="tkn" name="Token" @bind-Value=SmokeModel.Token placeholder="Result" enabled="false" />
     </div>
 
+
     <button type="submit" disabled="@ButtonIsDisabled" class="btn btn-primary">Test</button>
 </EditForm>
 
 
-
 @code {
     @inject ISmokeTestTools SmokeTestTools;
-   
+    protected IEnumerable<EndPointProfile> EndPoints { get; set; } = new List<EndPointProfile>();
+    protected EndPointProfile SelectedEndPointProfile { get; set; } 
     protected SmokeParams SmokeModel { get; set; } = new SmokeParams();
     protected bool ButtonIsDisabled { get; set; }
+
+    [Parameter]  
+        public string Key {  
+            get;  
+            set;  
+        }  
+    protected EndPointProfile Endpoint
+    {
+            get;  
+            set;  
+        }  
+
+    protected override async Task OnInitializedAsync()
+    {
+        EndPoints = await SmokeTestTools.GetProfiles();
+    }
+
+    private  void OnSelection(string selection)
+    {
+        //await Task.Delay(50);
+        SelectedEndPointProfile = EndPoints.Where<EndPointProfile>(x => x.ClientId == selection).FirstOrDefault();
+        SmokeModel.ClientId = SelectedEndPointProfile.ClientId;
+        SmokeModel.Url = SelectedEndPointProfile.BaseUrl;
+        //return;
+    }
 
     protected void OnHealthCheckClick(ChangeEventArgs e)
     {

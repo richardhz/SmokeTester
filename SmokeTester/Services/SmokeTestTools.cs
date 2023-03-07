@@ -112,7 +112,7 @@ public sealed class SmokeTestTools : ISmokeTestTools
     }
 
 
-    private async Task<IEnumerable<EndPointProfile>> GetProfiles()
+    public async Task<IEnumerable<EndPointProfile>> GetProfiles()
     {
         string data;
         try
