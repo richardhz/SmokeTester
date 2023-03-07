@@ -50,6 +50,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Content Remove="Resources\Raw\Profiles.json" />
       <Content Remove="wwwroot\Profiles.json" />
     </ItemGroup>
 
