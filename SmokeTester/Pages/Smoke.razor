@@ -78,7 +78,16 @@
         //await Task.Delay(50);
         SelectedEndPointProfile = EndPoints.Where<EndPointProfile>(x => x.ClientId == selection).FirstOrDefault();
         SmokeModel.ClientId = SelectedEndPointProfile.ClientId;
-        SmokeModel.Url = SelectedEndPointProfile.BaseUrl;
+        SmokeModel.TenantId = SelectedEndPointProfile.TenantId;
+        if (SmokeModel.IsHealthCheck)
+        {
+            SmokeModel.Url = $"{SelectedEndPointProfile.BaseUrl}/health";
+        }
+        else
+        {
+            SmokeModel.Url = SelectedEndPointProfile.ActiveUrl;
+        }
+        
         //return;
     }
 
@@ -88,10 +97,18 @@
         {
             SmokeModel.TokenRequired = false;
             SmokeModel.UsePost = false;
+            if (SelectedEndPointProfile is not null)
+            {
+                SmokeModel.Url = $"{SelectedEndPointProfile.BaseUrl}/health"; 
+            }
         } else
         {
             SmokeModel.TokenRequired = true;
             SmokeModel.UsePost = true;
+            if (SelectedEndPointProfile is not null)
+            {
+                SmokeModel.Url = SelectedEndPointProfile.ActiveUrl;
+            }
         }
     }
 
