@@ -1,4 +1,5 @@
 ﻿using SmokeTester.Data;
+using System.Globalization;
 using System.Net.Http.Headers;
 using System.Text.Json;
 
@@ -74,7 +75,8 @@ public sealed class SmokeTestTools : ISmokeTestTools
 
         if (smokeParams.UsePost)
         {
-           response = await client.PostAsync(smokeParams.Url, null);
+            
+            response = await client.PostAsync(smokeParams.Url, null);
         }
         else
         {

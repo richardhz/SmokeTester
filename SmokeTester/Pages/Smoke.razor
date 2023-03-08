@@ -39,6 +39,7 @@
         <InputCheckbox id="verb" name="UsePost" @bind-Value=SmokeModel.UsePost @oninput="OnOtherClick" />
         <label for="hcheck">Health Check</label>
         <InputCheckbox id="hcheck" name="HealthCheck" @bind-Value=SmokeModel.IsHealthCheck @oninput="OnHealthCheckClick" />
+        <button type="submit" disabled="@ButtonIsDisabled" class="btn btn-primary">Test</button>
     </div>
 
     <div class="form-group form-row mb-3">
@@ -46,7 +47,7 @@
     </div>
 
 
-    <button type="submit" disabled="@ButtonIsDisabled" class="btn btn-primary">Test</button>
+   
 </EditForm>
 
 
@@ -75,7 +76,6 @@
 
     private  void OnSelection(string selection)
     {
-        //await Task.Delay(50);
         SelectedEndPointProfile = EndPoints.Where<EndPointProfile>(x => x.ClientId == selection).FirstOrDefault();
         SmokeModel.ClientId = SelectedEndPointProfile.ClientId;
         SmokeModel.TenantId = SelectedEndPointProfile.TenantId;
@@ -85,10 +85,10 @@
         }
         else
         {
+
+            
             SmokeModel.Url = SelectedEndPointProfile.ActiveUrl;
         }
-        
-        //return;
     }
 
     protected void OnHealthCheckClick(ChangeEventArgs e)
@@ -120,14 +120,12 @@
         }
     }
 
-
-
     
     protected async Task HandleValidSubmit()
     {
         SmokeModel.Token = await SmokeTestTools.ProcessRequest(SmokeModel);
-        //We make the call to smoke tools here when all required fields a filled out
-        //await Task.Delay(10);
+        
         return;
     }
+    
 }
