@@ -9,11 +9,10 @@
 <EditForm Model="SmokeModel" OnValidSubmit="@HandleValidSubmit">
     
     <div class="form-group form-row mb-3">
-        <div class="form-group form-row mb-3">
-            <label>Profile: </label>
-            <RhzDropdown DataSource="@EndPoints" GetValue=@(x=> (x.Key,x.ClientId)) 
+        <div class="form-group form-row mb-3 col-2">
+            <SmkFormSelect DataSource="@EndPoints" GetValue=@(x=> (x.Key,x.ClientId)) 
                          OnElementClick="@( (string selection)=> OnSelection(selection))">
-            </RhzDropdown>
+            </SmkFormSelect>
         </div>
         <div class="row">
             <div class="col-6">
@@ -46,7 +45,7 @@
         <InputTextArea rows="20" class="form-control col-sm-8" id="tkn" name="Token" @bind-Value=SmokeModel.Token placeholder="Result" enabled="false" />
     </div>
 
-
+    
    
 </EditForm>
 

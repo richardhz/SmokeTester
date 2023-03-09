@@ -2,12 +2,5 @@
 @typeparam TItem
 
 <div class="wrapper">
-    <select class="custom-select" @onchange="OnValueChanged" title="Profile is required ">
-        <option value="Select" selected disabled="disabled">(Choose Profile)</option>
-        @foreach (var item in DataSource)
-        {
-            @((Key,Value) = GetValue(item))
-            <option value="@Value"> @Key</option>
-        }
-    </select>
+    
 </div>

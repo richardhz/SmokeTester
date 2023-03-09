@@ -3,8 +3,13 @@
 namespace SmokeTester.Components;
 public partial class RhzDropdown<TItem>
 {
+    private string Label = string.Empty;
+
     [Parameter]
-    public Func<TItem, (string,string)> GetValue { get; set; }
+    public TItem? SelectedItem { get; set; }
+
+    [Parameter]
+    public Func<TItem, string> GetValue { get; set; }
 
     /// <summary>
     /// Data to show within dropdown
@@ -13,7 +18,7 @@ public partial class RhzDropdown<TItem>
     public IEnumerable<TItem> DataSource { get; set; }
 
     [Parameter]
-    public EventCallback<string> OnElementClick { get; set; }
+    public EventCallback<TItem> OnElementClick { get; set; }
 
     protected string Key { get; set; }
 
@@ -31,10 +36,11 @@ public partial class RhzDropdown<TItem>
 
     
 
-    private Task OnValueChanged(ChangeEventArgs e)
+    private async Task OnElementSelection(TItem selected)
     {
-        Value = e.Value.ToString();
-        return OnElementClick.InvokeAsync(Value);
+        await OnElementClick.InvokeAsync(selected);
+        SelectedItem = selected; 
+        Label = GetValue(SelectedItem);
     }
 
 }
