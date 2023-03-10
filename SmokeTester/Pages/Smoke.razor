@@ -9,19 +9,24 @@
 <EditForm Model="SmokeModel" OnValidSubmit="@HandleValidSubmit">
     
     <div class="form-group form-row mb-3">
-        <div class="form-group form-row mb-3 col-2">
+        <div class="form-group form-row mb-3 col-3">
             <SmkFormSelect DataSource="@EndPoints" GetValue=@(x=> (x.Key,x.ClientId)) 
                          OnElementClick="@( (string selection)=> OnSelection(selection))">
             </SmkFormSelect>
         </div>
-        <div class="row">
-            <div class="col-6">
-                <InputText class="form-control col-sm-8" id="clientId" name="ClientId" @bind-Value=SmokeModel.ClientId placeholder="ClientId" />
-                <ValidationMessage For="@(() => SmokeModel.ClientId)" />
+        <div class="form-group input-group mb-3">
+            <div class="form-floating col-5">
+                <input type="text" class="form-control" id="clientId" name="ClientId" @bind=SmokeModel.ClientId placeholder="ClientId">
+                <label for="clientId">ClientId</label>
+                @*<InputText class="form-control col-sm-8" id="clientId" name="ClientId" @bind-Value=SmokeModel.ClientId placeholder="ClientId" data-bs-toggle="tooltip" data-bs-placement="top" title="ClientId" />
+                <ValidationMessage For="@(() => SmokeModel.ClientId)" />*@
             </div>
-            <div class="col-6">
-                <InputText class="form-control col-sm-8" id="tenentId" name="TenantId" @bind-Value=SmokeModel.TenantId placeholder="TenantId" data-val="true" data-val-required="*" />
-                <ValidationMessage For="@(() => SmokeModel.TenantId)" />
+            <div class="col-2"></div>
+            <div class="form-floating col-5">
+                <input type="text" class="form-control" id="tenentId" name="TenantId" @bind=SmokeModel.TenantId placeholder="TenantId">
+                <label for="tenentId">TenantId</label>
+                @*<InputText class="form-control col-sm-8" id="tenentId" name="TenantId" @bind-Value=SmokeModel.TenantId placeholder="TenantId" title="TenantId" />
+                <ValidationMessage For="@(() => SmokeModel.TenantId)" />*@
             </div>
         </div>
     </div>
@@ -31,20 +36,26 @@
         <ValidationMessage For="@(() => SmokeModel.Url)" />
     </div>
 
-    <div class="mb-3">
-        <label for="tknr">Token required</label>
-        <InputCheckbox id="tknr" name="TokenRequired" @bind-Value=SmokeModel.TokenRequired @oninput="OnOtherClick" />
-        <label for="verb">Use Post</label>
-        <InputCheckbox id="verb" name="UsePost" @bind-Value=SmokeModel.UsePost @oninput="OnOtherClick" />
-        <label for="hcheck">Health Check</label>
-        <InputCheckbox id="hcheck" name="HealthCheck" @bind-Value=SmokeModel.IsHealthCheck @oninput="OnHealthCheckClick" />
-        <button type="submit" disabled="@ButtonIsDisabled" class="btn btn-primary">Test</button>
+    <div class="form-group form-row mb-3">
+        <div class="row">
+            <div class="col-6">
+                <label class="form-check-label" for="tknr">Token required</label>
+                <input class="form-check-input" type="checkbox" id="tknr" name="TokenRequired" @bind=SmokeModel.TokenRequired @oninput="OnOtherClick" />
+                <label class="form-check-label" for="verb">Use Post</label>
+                <input class="form-check-input" type="checkbox" id="verb" name="UsePost" @bind=SmokeModel.UsePost @oninput="OnOtherClick" />
+                <label class="form-check-label" for="hcheck">Health Check</label>
+                <input class="form-check-input" type="checkbox" id="hcheck" name="HealthCheck" @bind=SmokeModel.IsHealthCheck @oninput="OnHealthCheckClick" />
+            </div>
+            <div class="col-6">
+                <button type="submit" disabled="@ButtonIsDisabled" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Button tip on top">Test</button>
+            </div>
+        </div>
     </div>
 
+    
     <div class="form-group form-row mb-3">
         <InputTextArea rows="20" class="form-control col-sm-8" id="tkn" name="Token" @bind-Value=SmokeModel.Token placeholder="Result" enabled="false" />
     </div>
-
     
    
 </EditForm>

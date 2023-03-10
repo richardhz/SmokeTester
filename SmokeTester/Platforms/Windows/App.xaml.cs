@@ -1,4 +1,5 @@
-﻿using Microsoft.UI.Xaml;
+﻿using Microsoft.UI;
+using Microsoft.UI.Xaml;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -17,7 +18,24 @@ public partial class App : MauiWinUIApplication
 	public App()
 	{
 		this.InitializeComponent();
+
+		//Set the initial window size for windows desk to app. 
+		const int WindowWidth = 1400;
+		const int WindowHeight = 900;
+
+		Microsoft.Maui.Handlers.WindowHandler.Mapper.AppendToMapping(nameof(IWindow), (handler, View) =>
+		{
+			var mauiWindow = handler.VirtualView;
+			var nativeWindow = handler.PlatformView;
+			nativeWindow.Activate();
+			IntPtr windowHandle = WinRT.Interop.WindowNative.GetWindowHandle(nativeWindow);
+			WindowId windowId = Win32Interop.GetWindowIdFromWindow(windowHandle);
+			var appWindow = Microsoft.UI.Windowing.AppWindow.GetFromWindowId(windowId);
+			appWindow.Resize(new Windows.Graphics.SizeInt32(WindowWidth, WindowHeight));
+		});
 	}
+
+
 
 	protected override MauiApp CreateMauiApp() => MauiProgram.CreateMauiApp();
 }

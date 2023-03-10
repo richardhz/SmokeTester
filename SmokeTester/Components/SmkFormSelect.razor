@@ -3,7 +3,7 @@
 
 <div class="wrapper" data-bs-toggle="tooltip" data-bs-placement="top" title="Tooltip on top">
     <select class="form-select" @onchange="OnValueChanged" title="Profile is required ">
-        <option value="Select" selected disabled="disabled">(Choose Profile)</option>
+        <option value="Select" selected disabled="disabled">Choose...</option>
         @foreach (var item in DataSource)
         {
             @((Key, Value) = GetValue(item))
