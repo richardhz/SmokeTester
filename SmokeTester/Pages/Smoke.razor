@@ -18,15 +18,11 @@
             <div class="form-floating col-5">
                 <input type="text" class="form-control" id="clientId" name="ClientId" @bind=SmokeModel.ClientId placeholder="ClientId">
                 <label for="clientId">ClientId</label>
-                @*<InputText class="form-control col-sm-8" id="clientId" name="ClientId" @bind-Value=SmokeModel.ClientId placeholder="ClientId" data-bs-toggle="tooltip" data-bs-placement="top" title="ClientId" />
-                <ValidationMessage For="@(() => SmokeModel.ClientId)" />*@
             </div>
             <div class="col-2"></div>
             <div class="form-floating col-5">
                 <input type="text" class="form-control" id="tenentId" name="TenantId" @bind=SmokeModel.TenantId placeholder="TenantId">
                 <label for="tenentId">TenantId</label>
-                @*<InputText class="form-control col-sm-8" id="tenentId" name="TenantId" @bind-Value=SmokeModel.TenantId placeholder="TenantId" title="TenantId" />
-                <ValidationMessage For="@(() => SmokeModel.TenantId)" />*@
             </div>
         </div>
     </div>
@@ -63,6 +59,7 @@
 
 @code {
     @inject ISmokeTestTools SmokeTestTools;
+    @inject ISmokeStorageTools SmokeStorageTools;
     protected IEnumerable<EndPointProfile> EndPoints { get; set; } = new List<EndPointProfile>();
     protected EndPointProfile SelectedEndPointProfile { get; set; } 
     protected SmokeParams SmokeModel { get; set; } = new SmokeParams();
@@ -81,7 +78,8 @@
 
     protected override async Task OnInitializedAsync()
     {
-        EndPoints = await SmokeTestTools.GetProfiles();
+        //EndPoints = await SmokeTestTools.GetProfiles();
+        EndPoints = await SmokeStorageTools.LoadFromFileAsync<IEnumerable<EndPointProfile>>("TestProfiles.json");
     }
 
     private  void OnSelection(string selection)
@@ -133,8 +131,12 @@
     
     protected async Task HandleValidSubmit()
     {
-        SmokeModel.Token = await SmokeTestTools.ProcessRequest(SmokeModel);
-        
+        ButtonIsDisabled = true;
+        //await SmokeStorageTools.Save(EndPoints, "TestProfiles.json");
+        //SmokeModel.Token = await SmokeTestTools.ProcessRequest(SmokeModel);  //tempory disabled for testing
+        await Task.Delay(6000);
+        //var data = await SmokeStorageTools.Load<IEnumerable<EndPointProfile>>("TestProfiles.json");
+        ButtonIsDisabled = false; 
         return;
     }
     

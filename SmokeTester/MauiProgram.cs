@@ -26,6 +26,7 @@ public static class MauiProgram
 #endif
 
 		builder.Services.AddSingleton<ISmokeTestTools, SmokeTestTools>();
+		builder.Services.AddSingleton<ISmokeStorageTools, SmokeStorageTools>();
 
 		return builder.Build();
 	}
