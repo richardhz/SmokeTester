@@ -22,18 +22,37 @@ public partial class App : MauiWinUIApplication
 		//Set the initial window size for windows desk to app. 
 		const int WindowWidth = 1400;
 		const int WindowHeight = 900;
+        Microsoft.UI.Xaml.Window nativeWindow;
+        Microsoft.UI.Windowing.AppWindow appWindow;
 
-		Microsoft.Maui.Handlers.WindowHandler.Mapper.AppendToMapping(nameof(IWindow), (handler, View) =>
+
+        Microsoft.Maui.Handlers.WindowHandler.Mapper.AppendToMapping(nameof(IWindow), (handler, View) =>
 		{
 			var mauiWindow = handler.VirtualView;
-			var nativeWindow = handler.PlatformView;
+			nativeWindow = handler.PlatformView;
 			nativeWindow.Activate();
 			IntPtr windowHandle = WinRT.Interop.WindowNative.GetWindowHandle(nativeWindow);
 			WindowId windowId = Win32Interop.GetWindowIdFromWindow(windowHandle);
-			var appWindow = Microsoft.UI.Windowing.AppWindow.GetFromWindowId(windowId);
+			appWindow = Microsoft.UI.Windowing.AppWindow.GetFromWindowId(windowId);
 			appWindow.Resize(new Windows.Graphics.SizeInt32(WindowWidth, WindowHeight));
-		});
-	}
+            if (appWindow != null)
+            {
+                appWindow.Changed += AppWindow_Changed;
+            }
+        });
+
+        void AppWindow_Changed(Microsoft.UI.Windowing.AppWindow sender, Microsoft.UI.Windowing.AppWindowChangedEventArgs args)
+        {
+            if (args.DidPositionChange)
+            {
+                // Whenever the app's window moves, force the WebView2 to update, which will cause any open HTML select's to close (which is normal behavior), and thus not "float around"
+                var originalSize = appWindow.Size;
+                appWindow.Resize(new Windows.Graphics.SizeInt32(appWindow.Size.Width, appWindow.Size.Height + 1));
+                appWindow.Resize(originalSize);
+
+            }
+        }
+    }
 
 
 

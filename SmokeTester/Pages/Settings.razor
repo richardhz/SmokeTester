@@ -62,7 +62,7 @@
     private void OnSelection(string selection)
     {
         SelectedEndPointProfile = MutableEndpoints.Where<EndPointProfile>(x => x.ClientId == selection).FirstOrDefault();
-        DisableAdd(); // Add will bring up a new dialog
+        //DisableAdd(); // Add will bring up a new dialog
        
     }
 
