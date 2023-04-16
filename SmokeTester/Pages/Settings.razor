@@ -3,45 +3,52 @@
 @using SmokeTester.Services;
 
 <h1>Settings</h1>
-
+<div class="row">
+<div class="col-6">
 <EditForm Model="SelectedEndPointProfile" OnValidSubmit="@HandleValidSubmit">
     <div class="form-group form-row mb-3">
-        <div class="form-group form-row mb-3 col-3">
+        <div class="form-group form-row mb-3 col-4">
             <SmkFormSelect DataSource="@MutableEndpoints" GetValue=@(x=> (x.Key,x.ClientId))
                            OnElementClick="@( (string selection)=> OnSelection(selection))">
             </SmkFormSelect>
         </div>
         <div class="form-group  mb-3">
-            <div class="form-floating col-6">
-                <input type="text" class="form-control" id="keyId" name="KeyId" @onblur="DisableAdd"  @bind=SelectedEndPointProfile.Key placeholder="Key">
+            <div class="form-floating col-9">
+                <input type="text" class="form-control" id="keyId" name="KeyId"   @bind=SelectedEndPointProfile.Key placeholder="Key">
                 <label for="keyId">Key</label>
             </div>
-            <div class="form-floating col-6">
+            <div class="form-floating col-9">
                 <input type="text" class="form-control" id="clientId" name="ClientId" @bind=SelectedEndPointProfile.ClientId placeholder="ClientId">
                 <label for="clientId">ClientId</label>
             </div>
             
-            <div class="form-floating col-6">
+            <div class="form-floating col-9">
                 <input type="text" class="form-control" id="tenentId" name="TenantId" @bind=SelectedEndPointProfile.TenantId placeholder="TenantId">
                 <label for="tenentId">TenantId</label>
             </div>
-            <div class="form-floating col-6">
+            <div class="form-floating col-9">
                 <input type="text" class="form-control" id="baseUrlId" name="BaseUrlId" @bind=SelectedEndPointProfile.BaseUrl placeholder="Base Url">
                 <label for="baseUrlId">BaseUrlId</label>
             </div>
-            <div class="form-floating col-6">
+            <div class="form-floating col-9">
                 <input type="text" class="form-control" id="activeUrlId" name="ActiveUrlId" @bind=SelectedEndPointProfile.ActiveUrl placeholder="Active Url">
                 <label for="activeUrlId">ActiveUrlId</label>
             </div>
         </div>
     </div>
-    <div class="col-6">
+    <div class="col-9">
         <button type="button" disabled="@AddButtonIsDisabled" class="btn btn-primary" @onclick="HandleAddProfile" data-bs-toggle="tooltip" data-bs-placement="top" title="Button tip on top">Add Profile</button>
         <button type="submit" disabled="@ButtonIsDisabled" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Button tip on top">Save</button>
        
     </div>
 </EditForm>
-
+</div>
+<div class="col-6">
+    <div class="form-group form-row mb-3">
+        <InputTextArea rows="20" class="form-control col-sm-8" id="tkn" name="Token" @bind-Value=SmokeModel.Token placeholder="Result" enabled="false" />
+    </div>
+</div>
+</div>
 
 @code {
     @inject ISmokeStorageTools SmokeStorageTools;
@@ -56,6 +63,7 @@
     protected override async Task OnInitializedAsync()
     {
         var endPoints = await SmokeStorageTools.LoadFromFileAsync<IEnumerable<EndPointProfile>>("TestProfiles.json");
+        SmokeModel.Token = SmokeStorageTools.DisplayJson<IEnumerable<EndPointProfile>>(endPoints);
         MutableEndpoints = endPoints.ToList(); //we need to do this to make the list mutable;
     }
 
@@ -84,13 +92,15 @@
         
         //ButtonIsDisabled = true;
         await SmokeStorageTools.SaveToFileAsync(MutableEndpoints, "TestProfiles.json");
+        SmokeModel.Token = SmokeStorageTools.DisplayJson<IEnumerable<EndPointProfile>>(MutableEndpoints);
         //ButtonIsDisabled = false;
         return;
     }
 
     protected void HandleAddProfile()
     {
-        //this will bring up a new dialog
+        SelectedEndPointProfile = new EndPointProfile {Key = "New Item" };
+
         MutableEndpoints.Add(SelectedEndPointProfile);
     }
 }

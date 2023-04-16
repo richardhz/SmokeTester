@@ -35,6 +35,25 @@ public class SmokeStorageTools : ISmokeStorageTools
         return data;
     }
 
+    //public async Task<string> DisplayJsonAsync<TItem>(string filename)
+    //{
+    //    var path = Path.Combine(FileSystem.AppDataDirectory, filename);
+    //    if (!File.Exists(path))
+    //    {
+    //        var newdata = new List<TItem>();
+    //        await SaveToFileAsync(newdata, filename, true);
+    //    }
+    //    var json = await File.ReadAllTextAsync(path);
+    //    return json;
+    //}
+
+    public  string DisplayJson<TItem>(TItem data)
+    {
+        var json = JsonSerializer.Serialize(data, new JsonSerializerOptions { WriteIndented = true });
+        return json;
+    }
+
+
 
 
 }
