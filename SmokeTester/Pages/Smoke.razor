@@ -70,11 +70,11 @@
             get;  
             set;  
         }  
-    protected EndPointProfile Endpoint
-    {
-            get;  
-            set;  
-        }  
+    //protected EndPointProfile Endpoint
+    //{
+    //        get;  
+    //        set;  
+    //    }  
 
     protected override async Task OnInitializedAsync()
     {
@@ -87,6 +87,8 @@
         SelectedEndPointProfile = EndPoints.Where<EndPointProfile>(x => x.ClientId == selection).FirstOrDefault();
         SmokeModel.ClientId = SelectedEndPointProfile.ClientId;
         SmokeModel.TenantId = SelectedEndPointProfile.TenantId;
+        SmokeModel.IsB2C = SelectedEndPointProfile.IsB2C;
+
         if (SmokeModel.IsHealthCheck)
         {
             SmokeModel.Url = $"{SelectedEndPointProfile.BaseUrl}/health";
@@ -134,7 +136,20 @@
         ButtonIsDisabled = true;
         //await SmokeStorageTools.Save(EndPoints, "TestProfiles.json");
         //SmokeModel.Token = await SmokeTestTools.ProcessRequest(SmokeModel);  //tempory disabled for testing
-        await Task.Delay(6000);
+        if (SmokeModel.Url.Contains("WebJob"))
+        {
+            var response = await SmokeTestTools.RunJob(SmokeModel.Url, "$pos-qa-lxs-webapp", "ZidmwEA0piBWDQ0WnyWQqLz9QrGlRk7bk6Gyi896ttp7Tp5Gs767WMpztKlG");
+            //if (response.IsSuccessStatusCode)
+            //{
+                SmokeModel.Token = response.ReasonPhrase;
+            //}
+        }
+        else
+        {
+            SmokeModel.Token = await SmokeTestTools.ProcessRequest(SmokeModel);
+        }
+
+        //await Task.Delay(6000);
         //var data = await SmokeStorageTools.Load<IEnumerable<EndPointProfile>>("TestProfiles.json");
         ButtonIsDisabled = false; 
         return;

@@ -4,3 +4,50 @@ also possibly store the key for the tenantId in the clientId record.
 
 base address is also stored in clientId record
 if health check is selected url will be base address + /health 
+
+
+
+Ideas about including B2C this is just rough test to see if it can work
+private async Task<string> GetTokenAsync(SmokeParams smokeParams)
+    {
+        string scope = ".default" ;
+
+        string authority;
+        string fullscope;
+        IPublicClientApplication app;
+        
+        if (smokeParams.IsB2C) 
+        {
+            scope = """("openid"; "profile"; "offline_access"; "https://MGIAIDTESTB2C.onmicrosoft.com/api/Access")""";
+            authority = $"https://mgiaidtestb2c.b2clogin.com/tfp/{smokeParams.TenantId}";
+            try
+            {
+                app = PublicClientApplicationBuilder.Create(smokeParams.ClientId)
+               .WithB2CAuthority($"{authority}/B2C_1A_SignIn_SPA").WithDefaultRedirectUri()
+               .Build();
+            }
+            catch (Exception ex)
+            {
+                var xx = ex.Message;
+                throw;
+            }
+            
+            fullscope = $"{smokeParams.ClientId}/{scope}";
+        }
+        else
+        {
+            authority = $"https://login.microsoftonline.com/{smokeParams.TenantId}";
+            app = PublicClientApplicationBuilder.Create(smokeParams.ClientId)
+            .WithAuthority(new Uri(authority)).WithDefaultRedirectUri()
+            .Build();
+            fullscope = $"{smokeParams.ClientId}/{scope}";
+        }
+
+
+
+        
+        
+        var result = await app.AcquireTokenInteractive(new[] { fullscope }).ExecuteAsync();
+        
+        return result.AccessToken;
+    }

@@ -1,5 +1,7 @@
 ﻿using SmokeTester.Data;
+using System;
 using System.Globalization;
+using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text.Json;
 
@@ -134,7 +136,30 @@ public sealed class SmokeTestTools : ISmokeTestTools
         return profiles;
     }
 
-    
+    public string GetBase64EncodedCredentials(string username, string password)
+    {
+        var userCredentialsBytes = System.Text.Encoding.UTF8.GetBytes(username + ":" + password);
+        return Convert.ToBase64String(userCredentialsBytes);
+    }
 
-    
+    public async Task<HttpResponseMessage> RunJob(string baseUrl, string user, string pwd)
+    {
+        HttpClient client = null;
+
+        if (baseUrl is not null)
+        {
+            client = _httpClientFactory.CreateClient();
+        }
+
+        var uri = $"{baseUrl}";
+
+        var httpRequestMessage = new HttpRequestMessage(HttpMethod.Post, uri);
+
+        var base64Credentials = GetBase64EncodedCredentials(user, pwd);
+
+        if (!string.IsNullOrEmpty(base64Credentials)) { httpRequestMessage.Headers.Add("Authorization", "Basic " + base64Credentials); }
+        return await client.SendAsync(httpRequestMessage, CancellationToken.None);
+    }
+
+
 }

@@ -15,5 +15,6 @@ public class EndPointProfile
     public string TenantId { get; set; }
     public string BaseUrl { get; set; }
     public string ActiveUrl { get; set; }
+    public bool IsB2C { get; set; } = false;
     
 }

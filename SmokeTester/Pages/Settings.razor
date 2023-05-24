@@ -1,5 +1,27 @@
 ﻿@page "/settings"
-@using SmokeTester.Data;
+<SmkWebJobEditor></SmkWebJobEditor>
+
+<input type="radio" class="btn-check" name="options" id="option1" autocomplete="off" checked>
+<label class="btn btn-secondary" for="option1">Smoke Test</label>
+
+<input type="radio" class="btn-check" name="options" id="option2" autocomplete="off">
+<label class="btn btn-secondary" for="option2">Web Jobs</label>
+
+
+<input type="radio" class="btn-check" name="options" id="option4" autocomplete="off">
+<label class="btn btn-secondary" for="option4">Other</label>
+@code
+{
+    protected override async Task OnInitializedAsync()
+    {
+
+    }
+
+}
+
+
+
+@*@using SmokeTester.Data;
 @using SmokeTester.Services;
 
 <h1>Settings</h1>
@@ -70,7 +92,6 @@
     private void OnSelection(string selection)
     {
         SelectedEndPointProfile = MutableEndpoints.Where<EndPointProfile>(x => x.ClientId == selection).FirstOrDefault();
-        //DisableAdd(); // Add will bring up a new dialog
        
     }
 
@@ -104,3 +125,4 @@
         MutableEndpoints.Add(SelectedEndPointProfile);
     }
 }
+*@

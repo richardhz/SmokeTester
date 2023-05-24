@@ -1,0 +1,111 @@
+﻿@using SmokeTester.Data;
+@using SmokeTester.Services;
+
+<h1>WebJob Settings</h1>
+<div class="row">
+    <div class="col-6">
+        <EditForm Model="SelectedWebJobProfile" OnValidSubmit="@HandleValidSubmit">
+            <div class="form-group form-row mb-3">
+                <div class="form-group form-row mb-3 col-4">
+                    <SmkFormSelect DataSource="@MutableEndpoints" GetValue=@(x=> (x.Key,x.JobName))
+                                   OnElementClick="@( (string selection)=> OnSelection(selection))">
+                    </SmkFormSelect>
+                </div>
+                <div class="form-group  mb-3">
+                    <div class="form-floating col-9">
+                        <input type="text" class="form-control" id="keyId" name="KeyId" @bind=SelectedWebJobProfile.Key placeholder="Key">
+                        <label for="keyId">Key</label>
+                    </div>
+                    <div class="form-floating col-9">
+                        <input type="text" class="form-control" id="jobName" name="ClientId" @bind=SelectedWebJobProfile.JobName placeholder="JobName">
+                        <label for="jobName">JobName</label>
+                    </div>
+
+                    <div class="form-floating col-9">
+                        <input type="text" class="form-control" id="tenentId" name="TenantId" @bind=SelectedWebJobProfile.TenantId placeholder="TenantId">
+                        <label for="tenentId">TenantId</label>
+                    </div>
+
+                    <div class="form-floating col-9">
+                        <input type="text" class="form-control" id="user" name="User" @bind=SelectedWebJobProfile.User placeholder="User">
+                        <label for="user">User</label>
+                    </div>
+
+                    <div class="form-floating col-9">
+                        <input type="text" class="form-control" id="pwd" name="Password" @bind=SelectedWebJobProfile.Password placeholder="Password">
+                        <label for="pwd">Password</label>
+                    </div>
+
+                    <div class="form-floating col-9">
+                        <input type="text" class="form-control" id="baseUrlId" name="BaseUrlId" @bind=SelectedWebJobProfile.BaseUrl placeholder="Base Url">
+                        <label for="baseUrlId">BaseUrlId</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-9">
+                <button type="button" disabled="@AddButtonIsDisabled" class="btn btn-primary" @onclick="HandleAddProfile" data-bs-toggle="tooltip" data-bs-placement="top" title="Button tip on top">Add Profile</button>
+                <button type="submit" disabled="@ButtonIsDisabled" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Button tip on top">Save</button>
+
+            </div>
+        </EditForm>
+    </div>
+    <div class="col-6">
+        <div class="form-group form-row mb-3">
+            <InputTextArea rows="20" class="form-control col-sm-8" id="tkn" name="Token" @bind-Value=JobModel.Result placeholder="Result" enabled="false" />
+        </div>
+    </div>
+</div>
+
+@code {
+    @inject ISmokeStorageTools SmokeStorageTools;
+
+    protected WebJobProfile SelectedWebJobProfile { get; set; } = new WebJobProfile();
+    protected JobParams JobModel { get; set; } = new JobParams();
+    protected List<WebJobProfile> MutableEndpoints { get; set; } = new List<WebJobProfile>();
+    protected bool ButtonIsDisabled { get; set; } = false;
+    protected bool AddButtonIsDisabled { get; set; } = false;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        var webJobs = await SmokeStorageTools.LoadFromFileAsync<IEnumerable<WebJobProfile>>("JobProfiles.json");
+        JobModel.Result = SmokeStorageTools.DisplayJson<IEnumerable<WebJobProfile>>(webJobs);
+        MutableEndpoints = webJobs.ToList(); //we need to do this to make the list mutable;
+    }
+
+    private void OnSelection(string selection)
+    {
+        SelectedWebJobProfile = MutableEndpoints.Where<WebJobProfile>(x => x.JobName == selection).FirstOrDefault();
+
+    }
+
+    protected void DisableAdd()
+    {
+        var x = MutableEndpoints.Where<WebJobProfile>(y => y.Key == SelectedWebJobProfile.Key).FirstOrDefault();
+        if (x != null)
+        {
+            AddButtonIsDisabled = true;
+        }
+        else
+        {
+            AddButtonIsDisabled = false;
+        }
+    }
+
+    protected async Task HandleValidSubmit()
+    {
+
+        //ButtonIsDisabled = true;
+        await SmokeStorageTools.SaveToFileAsync(MutableEndpoints, "JobProfiles.json");
+        JobModel.Result = SmokeStorageTools.DisplayJson<IEnumerable<WebJobProfile>>(MutableEndpoints);
+        //ButtonIsDisabled = false;
+        return;
+    }
+
+    protected void HandleAddProfile()
+    {
+        SelectedWebJobProfile = new WebJobProfile { Key = "New Item" };
+
+        MutableEndpoints.Add(SelectedWebJobProfile);
+    }
+}

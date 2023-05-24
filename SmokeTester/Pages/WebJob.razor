@@ -1,0 +1,99 @@
+﻿@page "/webjob"
+@using SmokeTester.Data;
+@using SmokeTester.Services;
+
+<h1>Check WebJob</h1>
+<EditForm Model="JobModel" OnValidSubmit="@HandleValidSubmit">
+
+    <div class="form-group form-row mb-3">
+        <div class="form-group form-row mb-3 col-3">
+            <SmkFormSelect DataSource="@WebJobs" GetValue=@(x=> (x.Key,x.JobName))
+                           OnElementClick="@( (string selection)=> OnSelection(selection))">
+            </SmkFormSelect>
+        </div>
+        <div class="form-group input-group mb-3">
+            <div class="form-floating col-5">
+                <input type="text" class="form-control" id="jobName" name="JobName" @bind=JobModel.JobName placeholder="JobName">
+                <label for="jobName">JobName</label>
+            </div>
+            <div class="col-2"></div>
+            <div class="form-floating col-5">
+                <input type="text" class="form-control" id="tenentId" name="TenantId" @bind=JobModel.TenantId placeholder="TenantId">
+                <label for="tenentId">TenantId</label>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group form-row mb-3">
+        <InputText class="form-control col-sm-8" id="url" name="Url" @bind-Value=JobModel.Url placeholder="Url" data-val="true" data-val-required="*" />
+        <ValidationMessage For="@(() => JobModel.Url)" />
+    </div>
+
+    <div class="form-group form-row mb-3">
+        <div class="row">
+            <div class="col-6">
+            </div>
+            <div class="col-6">
+                <button type="submit" disabled="@ButtonIsDisabled" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Button tip on top">Test</button>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="form-group form-row mb-3">
+        <InputTextArea rows="20" class="form-control col-sm-8" id="tkn" name="Token" @bind-Value=JobModel.Result placeholder="Result" enabled="false" />
+    </div>
+
+
+</EditForm>
+
+@code
+{
+    @inject ISmokeTestTools SmokeTestTools;
+    @inject ISmokeStorageTools SmokeStorageTools;
+    protected JobParams JobModel { get; set; } = new JobParams();
+    protected IEnumerable<WebJobProfile> WebJobs { get; set; } = new List<WebJobProfile>();
+    protected WebJobProfile SelectedWebJobProfile { get; set; }
+    protected bool ButtonIsDisabled { get; set; }
+
+
+    [Parameter]
+    public string Key
+    {
+        get;
+        set;
+    }
+    //protected WebJobProfile WebJob
+    //{
+    //    get;
+    //    set;
+    //}
+
+    protected override async Task OnInitializedAsync()
+    {
+        //EndPoints = await SmokeTestTools.GetProfiles();
+        WebJobs = await SmokeStorageTools.LoadFromFileAsync<IEnumerable<WebJobProfile>>("JobProfiles.json");
+    }
+
+    private void OnSelection(string selection)
+    {
+        SelectedWebJobProfile = WebJobs.Where<WebJobProfile>(x => x.JobName == selection).FirstOrDefault();
+        JobModel.JobName = SelectedWebJobProfile.JobName;
+        JobModel.TenantId = SelectedWebJobProfile.TenantId;
+        JobModel.User = SelectedWebJobProfile.User;
+        JobModel.Password = SelectedWebJobProfile.Password;
+        JobModel.Url = SelectedWebJobProfile.BaseUrl;
+        
+    }
+
+    protected async Task HandleValidSubmit()
+    {
+        ButtonIsDisabled = true;
+        //JobModel.User = "$pos-qa-lxs-webapp";
+        //JobModel.Password = "ZidmwEA0piBWDQ0WnyWQqLz9QrGlRk7bk6Gyi896ttp7Tp5Gs767WMpztKlG";
+        var response = await SmokeTestTools.RunJob(JobModel.Url, JobModel.User, JobModel.Password );
+        JobModel.Result = response.ReasonPhrase;
+        ButtonIsDisabled = false;
+        return;
+    }
+}

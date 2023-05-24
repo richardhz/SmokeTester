@@ -1,0 +1,3 @@
+@authAccess = "{Basic JGVzcy1xYS1seHMtMS13ZWJhcHA6RGVrM2xOb3g4bURINlpkbHZub25FcHJLSGZyOVRRdlAyOXNuY3V0enlYbWVQSm5kOG9vRmtlOGkyZ0NX}"
+Post https://ess-qa-lxs-1-webapp.scm.azurewebsites.net/api/triggeredwebjobs/ESSCleanUpWebJob/start
+Authorization: @authAccess

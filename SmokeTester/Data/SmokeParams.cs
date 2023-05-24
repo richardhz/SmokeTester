@@ -15,13 +15,14 @@ public class SmokeParams
     public bool TokenRequired { get; set; } = true;
     public bool UsePost { get; set; } = true;
     public bool IsHealthCheck { get; set; }
+    public bool IsB2C { get; set; }
 
     private string RequestUrl()
     {
         //26 days my be configurable.
         if (_url is not null && _url.ToUpper().Contains("{REQUIRED-DATE-STRING}"))
         {
-            var datestring = DateTime.Now.AddDays(-26).ToString("ddd, d MMM yyyy HH:mm:ss", CultureInfo.CreateSpecificCulture("en-GB"));
+            var datestring = DateTime.Now.AddDays(-5).ToString("ddd, d MMM yyyy HH:mm:ss", CultureInfo.CreateSpecificCulture("en-GB"));
             datestring += " GMT";
             return _url.Replace("{REQUIRED-DATE-STRING}", datestring,StringComparison.CurrentCultureIgnoreCase);
         }
