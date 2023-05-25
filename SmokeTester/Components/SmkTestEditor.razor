@@ -38,7 +38,8 @@
             <div class="col-9">
                 <button type="button" disabled="@AddButtonIsDisabled" class="btn btn-primary" @onclick="HandleAddProfile" data-bs-toggle="tooltip" data-bs-placement="top" title="Button tip on top">Add Profile</button>
                 <button type="submit" disabled="@ButtonIsDisabled" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Button tip on top">Save</button>
-
+                <button type="button" class="btn btn-primary" @onclick="HandleExport" data-bs-toggle="tooltip" data-bs-placement="top" title="Button tip on top">Export</button>
+                <button type="button" class="btn btn-primary" @onclick="HandleImport" data-bs-toggle="tooltip" data-bs-placement="top" title="Button tip on top">Import</button>
             </div>
         </EditForm>
     </div>
@@ -100,5 +101,19 @@
         SelectedEndPointProfile = new EndPointProfile { Key = "New Item" };
 
         MutableEndpoints.Add(SelectedEndPointProfile);
+    }
+
+    protected async Task HandleExport()
+    {
+        await SmokeStorageTools.ExportFile<IEnumerable<EndPointProfile>>(MutableEndpoints, "TestProfiles.json");
+    }
+
+    protected async Task HandleImport()
+    {
+        await SmokeStorageTools.ImportFile<IEnumerable<EndPointProfile>>("TestProfiles.json");
+        var endPoints = await SmokeStorageTools.LoadFromFileAsync<IEnumerable<EndPointProfile>>("TestProfiles.json");
+        SmokeModel.Token = SmokeStorageTools.DisplayJson<IEnumerable<EndPointProfile>>(endPoints);
+        MutableEndpoints = endPoints.ToList();
+        SelectedEndPointProfile = new EndPointProfile();
     }
 }
