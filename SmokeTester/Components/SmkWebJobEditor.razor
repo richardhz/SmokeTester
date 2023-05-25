@@ -38,7 +38,7 @@
 
                     <div class="form-floating col-9">
                         <input type="text" class="form-control" id="baseUrlId" name="BaseUrlId" @bind=SelectedWebJobProfile.BaseUrl placeholder="Base Url">
-                        <label for="baseUrlId">BaseUrlId</label>
+                        <label for="baseUrlId">BaseUrl</label>
                     </div>
                 </div>
             </div>
@@ -95,10 +95,10 @@
     protected async Task HandleValidSubmit()
     {
 
-        //ButtonIsDisabled = true;
+        ButtonIsDisabled = true;
         await SmokeStorageTools.SaveToFileAsync(MutableEndpoints, "JobProfiles.json");
         JobModel.Result = SmokeStorageTools.DisplayJson<IEnumerable<WebJobProfile>>(MutableEndpoints);
-        //ButtonIsDisabled = false;
+        ButtonIsDisabled = false;
         return;
     }
 
