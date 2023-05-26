@@ -88,6 +88,7 @@
         SmokeModel.ClientId = SelectedEndPointProfile.ClientId;
         SmokeModel.TenantId = SelectedEndPointProfile.TenantId;
         SmokeModel.IsB2C = SelectedEndPointProfile.IsB2C;
+        SmokeModel.Token = string.Empty;
 
         if (SmokeModel.IsHealthCheck)
         {
@@ -95,8 +96,6 @@
         }
         else
         {
-
-            
             SmokeModel.Url = SelectedEndPointProfile.ActiveUrl;
         }
     }
