@@ -11,27 +11,41 @@ using static System.Net.Mime.MediaTypeNames;
 namespace SmokeTester.Services;
 public class SmokeStorageTools : ISmokeStorageTools
 {
+
+    protected ICloudStorageTools CloudStorageTools;
+    public SmokeStorageTools(ICloudStorageTools CloudStorageTools)
+    {
+        this.CloudStorageTools = CloudStorageTools;
+    }
+
     public async Task SaveToFileAsync<TItem>(TItem data, string filename, bool isNew = false ) 
     {
         var json = JsonSerializer.Serialize(data);
         var path = Path.Combine(FileSystem.AppDataDirectory, filename);
-        await File.WriteAllTextAsync(path, json);
+        var localSave =  File.WriteAllTextAsync(path, json);
+        var cloudSave = CloudStorageTools.UploadProfileAsync(json, filename);
+        await Task.WhenAll(localSave, cloudSave);
         if (!isNew)
         {
             await App.Current.MainPage.DisplayAlert("Saved", $"Saved {filename}", "OK");
         }
-        
     }
 
     public async Task<TItem> LoadFromFileAsync<TItem>(string filename) 
     {
-        var path = Path.Combine(FileSystem.AppDataDirectory, filename);
-        if (!File.Exists(path))
+        string json = await CloudStorageTools.DownloadProfleAsync(filename);
+        
+        if (string.IsNullOrEmpty(json)) 
         {
-            var newdata = new List<TItem>();
-            await SaveToFileAsync(newdata, filename, true);
+            var path = Path.Combine(FileSystem.AppDataDirectory, filename);
+            if (!File.Exists(path))
+            {
+                var newdata = new List<TItem>();
+                await SaveToFileAsync(newdata, filename, true);
+            }
+            json = await File.ReadAllTextAsync(path);
         }
-        var json = await File.ReadAllTextAsync(path);
+
         var data = JsonSerializer.Deserialize<TItem>(json);
         return data;
     }

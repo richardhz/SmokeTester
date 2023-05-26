@@ -1,9 +1,11 @@
 ﻿TODO
-Store clientId with a name key and have the clientId field a dropdown
-also possibly store the key for the tenantId in the clientId record.
+Cloud Storage
+The Filename will be prefixed with the Team name
+When instance of cloud plugin is created it checks if the team file exists
+if it exists load and all saves go there and local
+if the file does not exist upload from local
 
-base address is also stored in clientId record
-if health check is selected url will be base address + /health 
+
 
 
 
@@ -52,4 +54,4 @@ private async Task<string> GetTokenAsync(SmokeParams smokeParams)
         return result.AccessToken;
     }
 
-    example of radiobutton
+    

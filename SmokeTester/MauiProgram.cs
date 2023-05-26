@@ -27,6 +27,7 @@ public static class MauiProgram
 
 		builder.Services.AddSingleton<ISmokeTestTools, SmokeTestTools>();
 		builder.Services.AddSingleton<ISmokeStorageTools, SmokeStorageTools>();
+		builder.Services.AddSingleton<ICloudStorageTools, CloudStorageTools>();
 
 		return builder.Build();
 	}
