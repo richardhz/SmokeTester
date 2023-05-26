@@ -12,7 +12,7 @@ namespace SmokeTester.Services
     {
         private BlockBlobClient ConnectToAzureStorage(string fileName)
         {
-            string connectionString = "DefaultEndpointsProtocol=https;AccountName=rhzcloudstorage;AccountKey=x0hCzR7JAJJ+hbEqEe2gyaMqMmRqiPMs2KAtCF4CCnqA3RTYHmGQuZR/+a0/RZEKbefkD+meOow7+AStbPoyJw==;EndpointSuffix=core.windows.net";
+            string connectionString = "";
             string containerName = "testtooldata";
             string blobName = $"Team-{fileName}";
 
