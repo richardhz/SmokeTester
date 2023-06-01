@@ -41,7 +41,6 @@ public sealed class SmokeTestTools : ISmokeTestTools
 
     public async Task<string> ProcessRequest(SmokeParams smokeParams)
     {
-        var data = await GetProfiles();
         string accessToken = null;
         HttpClient client = null;
 

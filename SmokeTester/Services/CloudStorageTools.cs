@@ -10,27 +10,46 @@ namespace SmokeTester.Services
 {
     public class CloudStorageTools : ICloudStorageTools
     {
-        private BlockBlobClient ConnectToAzureStorage(string fileName)
+        public IPublicClientApplication IdentityClient { get; set; }
+
+        private async Task<BlockBlobClient> ConnectToAzureStorage(string fileName)
         {
-            string connectionString = "DefaultEndpointsProtocol=https;AccountName=rhzcloudstorage;AccountKey=x0hCzR7JAJJ+hbEqEe2gyaMqMmRqiPMs2KAtCF4CCnqA3RTYHmGQuZR/+a0/RZEKbefkD+meOow7+AStbPoyJw==;EndpointSuffix=core.windows.net";
+            var clientId = "77373c79-5e06-48b8-a974-b91eb2b9cdc0";
+            var tenantId = "8fda8d81-ebbf-4c25-9b08-2453e217680f";
+            string scope = ".default";
+            var fullscope = $"{clientId}/{scope}";
+            IdentityClient = PublicClientApplicationBuilder.Create(clientId)
+                .WithAuthority(AzureCloudInstance.AzurePublic, tenantId)
+                .WithRedirectUri("https://login.microsoftonline.com/common/oauth2/nativeclient")
+                .Build();
+
             string containerName = "testtooldata";
             string blobName = $"Team-{fileName}";
 
-            var bsc = new BlobServiceClient(connectionString);
+            //var bsc = new BlobServiceClient(connectionString);
 
-            var cc = bsc.GetBlobContainerClient(containerName);
-            if (!cc.Exists())
+            try
             {
-                cc = bsc.CreateBlobContainer(containerName);
+                var bsc = new BlobServiceClient(new Uri("https://sbrholding.blob.core.windows.net"), new DefaultAzureCredential());
+                var cc = bsc.GetBlobContainerClient(containerName);
+                if (!cc.Exists())
+                {
+                    cc = bsc.CreateBlobContainer(containerName);
+                }
+                return cc.GetBlockBlobClient(blobName);
             }
-            return cc.GetBlockBlobClient(blobName);
+            catch (Exception ex)
+            {
+                var em = ex.Message;
+                throw;
+            }
         }
 
         public async Task<string> DownloadProfleAsync(string filename)
         {
             using var ms = new MemoryStream();
             string jsonData = string.Empty;
-            var bbc = ConnectToAzureStorage(filename);
+            var bbc = await ConnectToAzureStorage(filename);
             if (bbc.Exists())
             {
                 await bbc.DownloadToAsync(ms);
@@ -45,7 +64,7 @@ namespace SmokeTester.Services
             byte[] data = Encoding.UTF8.GetBytes(jsonData);
 
             using MemoryStream stream = new MemoryStream(data);
-            var bbc = ConnectToAzureStorage(filename);
+            var bbc = await ConnectToAzureStorage(filename);
             await bbc.UploadAsync(stream);
         }
     }
