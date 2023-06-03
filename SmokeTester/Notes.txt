@@ -1,12 +1,25 @@
 ﻿TODO
 Cloud Storage
 The Filename will be prefixed with the Team name
-When instance of cloud plugin is created it checks if the team file exists
-if it exists load and all saves go there and local
-if the file does not exist upload from local
+
+look for application profile in a file located in FileSystem.Current.AppDataDirectory
+if not exist display setup configuration which requires
+	Team Name
+	Storage Account Name
+	Storage Account Key or connection string
+	Container Name
+Filename is "appConfig.json"	
+
+Save encrypted connection string to FileSystem.Current.AppDataDirectory
+
+encrypt possibly using AppInfo.Current.PackageName string as key
 
 
 
+
+Make sure to set the environment variables 
+AZURE_CLIENT_ID, AZURE_TENANT_ID, and AZURE_CLIENT_SECRET to the respective values 
+obtained during the App Registration process.
 
 
 Ideas about including B2C this is just rough test to see if it can work
