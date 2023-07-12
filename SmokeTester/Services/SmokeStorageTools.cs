@@ -22,9 +22,10 @@ public class SmokeStorageTools : ISmokeStorageTools
     {
         var json = JsonSerializer.Serialize(data);
         var path = Path.Combine(FileSystem.AppDataDirectory, filename);
-        var localSave =  File.WriteAllTextAsync(path, json);
-        var cloudSave = CloudStorageTools.UploadProfileAsync(json, filename);
-        await Task.WhenAll(localSave, cloudSave);
+        //var localSave = File.WriteAllTextAsync(path, json);
+        //var cloudSave = CloudStorageTools.UploadProfileAsync(json, filename);
+        //await Task.WhenAll(localSave, cloudSave);
+        await File.WriteAllTextAsync(path, json);
         if (!isNew)
         {
             await App.Current.MainPage.DisplayAlert("Saved", $"Saved {filename}", "OK");
@@ -33,8 +34,8 @@ public class SmokeStorageTools : ISmokeStorageTools
 
     public async Task<TItem> LoadFromFileAsync<TItem>(string filename) 
     {
-        string json = await CloudStorageTools.DownloadProfleAsync(filename);
-        
+        //string json = await CloudStorageTools.DownloadProfleAsync(filename);
+        string json = string.Empty;
         if (string.IsNullOrEmpty(json)) 
         {
             var path = Path.Combine(FileSystem.AppDataDirectory, filename);
