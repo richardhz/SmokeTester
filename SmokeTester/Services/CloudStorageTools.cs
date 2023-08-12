@@ -1,5 +1,5 @@
-﻿using System.Text;
-using Azure.Storage.Blobs.Specialized;
+﻿using Azure.Storage.Blobs.Specialized;
+using System.Text;
 
 namespace SmokeTester.Services
 {
@@ -8,7 +8,7 @@ namespace SmokeTester.Services
         private readonly BlobServiceClient _bsc;
         public CloudStorageTools(BlobServiceClient blobServiceClient)
         {
-                _bsc = blobServiceClient; 
+            _bsc = blobServiceClient;
         }
 
         private BlockBlobClient ConnectToAzureStorage(string fileName)
@@ -44,7 +44,7 @@ namespace SmokeTester.Services
                 jsonData = System.Text.Encoding.UTF8.GetString(ms.ToArray());
             }
             return jsonData;
-            
+
         }
 
         public async Task UploadProfileAsync(string jsonData, string filename)

@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Maui.Storage;
-using System.IO;
-using System.Text.Json;
-using static System.Net.Mime.MediaTypeNames;
+﻿using System.Text.Json;
 
 namespace SmokeTester.Services;
 public class SmokeStorageTools : ISmokeStorageTools
@@ -18,25 +10,25 @@ public class SmokeStorageTools : ISmokeStorageTools
         this.CloudStorageTools = CloudStorageTools;
     }
 
-    public async Task SaveToFileAsync<TItem>(TItem data, string filename, bool isNew = false ) 
+    public async Task SaveToFileAsync<TItem>(TItem data, string filename, bool isNew = false)
     {
         var json = JsonSerializer.Serialize(data);
         var path = Path.Combine(FileSystem.AppDataDirectory, filename);
-        //var localSave = File.WriteAllTextAsync(path, json);
-        //var cloudSave = CloudStorageTools.UploadProfileAsync(json, filename);
-        //await Task.WhenAll(localSave, cloudSave);
-        await File.WriteAllTextAsync(path, json);
+        var localSave = File.WriteAllTextAsync(path, json);
+        var cloudSave = CloudStorageTools.UploadProfileAsync(json, filename);
+        await Task.WhenAll(localSave, cloudSave);
+        //await File.WriteAllTextAsync(path, json);
         if (!isNew)
         {
             await App.Current.MainPage.DisplayAlert("Saved", $"Saved {filename}", "OK");
         }
     }
 
-    public async Task<TItem> LoadFromFileAsync<TItem>(string filename) 
+    public async Task<TItem> LoadFromFileAsync<TItem>(string filename)
     {
-        //string json = await CloudStorageTools.DownloadProfleAsync(filename);
-        string json = string.Empty;
-        if (string.IsNullOrEmpty(json)) 
+        string json = await CloudStorageTools.DownloadProfleAsync(filename);
+        //string json = string.Empty;
+        if (string.IsNullOrEmpty(json))
         {
             var path = Path.Combine(FileSystem.AppDataDirectory, filename);
             if (!File.Exists(path))
@@ -52,7 +44,7 @@ public class SmokeStorageTools : ISmokeStorageTools
     }
 
 
-    public  string DisplayJson<TItem>(TItem data)
+    public string DisplayJson<TItem>(TItem data)
     {
         var json = JsonSerializer.Serialize(data, new JsonSerializerOptions { WriteIndented = true });
         return json;
